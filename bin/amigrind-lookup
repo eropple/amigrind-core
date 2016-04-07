@@ -1,0 +1,23 @@
+#! /usr/bin/env ruby
+
+lib = File.expand_path(File.dirname(__FILE__) + '/../lib')
+$LOAD_PATH.unshift(lib) if File.directory?(lib) && !$LOAD_PATH.include?(lib)
+
+require 'amigrind/core'
+
+blueprint_name = ARGV[0]
+channel_name = ARGV[1]
+steps_back = ARGV[2]
+
+if blueprint_name.nil? || channel_name.nil?
+  $stderr.puts "usage: amigrind-lookup BLUEPRINT_NAME CHANNEL_NAME [STEPS_BACK]"
+  Kernel.exit 1
+end
+
+steps_back = (steps_back || 0).to_i
+
+image =
+  Amigrind::Core::Client.new(nil, nil) \
+    .get_image_by_channel(name: blueprint_name, channel: channel_name, steps_back: steps_back)
+
+puts JSON.pretty_generate(name: image.name, ami: image.id)
