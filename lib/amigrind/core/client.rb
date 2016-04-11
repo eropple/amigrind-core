@@ -11,8 +11,10 @@ module Amigrind
 
       def initialize(region, credentials)
         raise "'region' must be a String or nil." unless region.is_a?(String) || region.nil?
-        raise "'credentials' (#{credentials}) must be nil or an Aws::CredentialProvider." \
-          unless credentials.class.ancestors.include?(Aws::CredentialProvider) || credentials.nil?
+        raise "'credentials' (#{credentials}) must be nil, an Aws::Credentials, or an Aws::CredentialProvider." \
+          unless credentials.nil? ||
+                 credentials.class.ancestors.include?(Aws::CredentialProvider) ||
+                 credentials.is_a?(Aws::Credentials)
 
         @region = region
         @credentials = credentials
